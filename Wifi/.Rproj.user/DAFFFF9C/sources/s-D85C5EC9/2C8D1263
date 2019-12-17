@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576588544853.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "2C8D1263",
+    "lastKnownWriteTime" : 1576592824,
+    "last_content_update" : 1576598068693,
+    "path" : "C:/Users/Gebruiker/Desktop/wifi/Scripts/Preparation/wifi - initial.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "36,0",
+        "scrollLine" : "20"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

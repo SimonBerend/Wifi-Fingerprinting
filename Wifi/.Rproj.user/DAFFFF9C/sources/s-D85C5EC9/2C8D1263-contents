@@ -1,0 +1,46 @@
+# -------------------------------------------------------------------------
+# GOAL: Organize Wifi Data 
+# DESCRIPTION: This script 
+# DEVELOPER:
+# Tue Dec 17 11:16:04 2019 ------------------------------
+# -------------------------------------------------------------------------
+
+# load library -------------------------------------------------------------------------
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load("ggplot2", "RColorBrewer", "e1071",
+               "dplyr", "dbplyr", "tidyverse")
+
+# load data -------------------------------------------------------------------------
+setwd("C:/Users/Gebruiker/Desktop/wifi")
+wifi_train <- read.csv("Data/Raw/UJIndoorLoc/trainingData.csv",
+                  sep = ",")
+
+wifi_test <- read.csv("Data/Raw/UJIndoorLoc/validationData.csv",
+                 sep = ",")
+
+
+# Try stuff ---------------------------------------------------------------
+
+stats1 <- data.frame(
+  Min = apply(wifi_train, 2, min), # minimum
+  Q1 = apply(wifi_train, 2, quantile, 1/4), # First quartile
+  Med = apply(wifi_train, 2, median), # median
+  Mean = apply(wifi_train, 2, mean), # mean
+  Q3 = apply(wifi_train, 2, quantile, 3/4), # Third quartile
+  Max = apply(wifi_train, 2, max) # Maximum
+)
+head(stats1,5)
+
+
+stats1 %>% filter(Min = 100) %>% count()
+
+# process -------------------------------------------------------------------------
+
+
+
+# output -------------------------------------------------------------------------
+
+saveRDS()
+
+
