@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576754955221.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "EF120BA1",
+    "lastKnownWriteTime" : 8104338726696264226,
+    "last_content_update" : 1576754955221,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "8F5FCFD1",
+        "caption" : "wifi_train",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=wifi_train&cache_key=8F5FCFD1",
+        "displayedObservations" : 4487,
+        "environment" : "",
+        "expression" : "wifi_train",
+        "object" : "wifi_train",
+        "preview" : 0,
+        "totalObservations" : 4487,
+        "variables" : 521
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

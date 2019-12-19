@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576661963152.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "AD138C21",
+    "lastKnownWriteTime" : 1576685598,
+    "last_content_update" : 1576685598180,
+    "path" : "C:/Users/Gebruiker/Desktop/Esgitit/Blackwell - Customer Behaviour.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "202,10",
+        "scrollLine" : "192"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
