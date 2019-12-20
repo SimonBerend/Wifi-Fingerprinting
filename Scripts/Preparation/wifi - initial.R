@@ -66,6 +66,8 @@ wifi_fit_knn <- train(BUILDINGID ~ .,wifi_train,
 end_time <- Sys.time()
 end_time - start_time
 
+saveRDS(wifi_fit_knn, file = "Data/Clean/knn_mod.rds")
+
 # do predictions on wifi_test
 wifi_predict_knn <-predict(wifi_fit_knn, wifi_test)
 
