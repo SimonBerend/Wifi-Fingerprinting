@@ -61,6 +61,12 @@ ggplot(wifi_valid,aes(x= LONGITUDE, y = LATITUDE)) +
 # save for report
 save.image()
 
+
+# nearZeroVariance --------------------------------------------------
+
+
+
+
 x <- unique(wifi_main$PHONEID)
 y <- unique(wifi_valid$PHONEID)
 length(y)

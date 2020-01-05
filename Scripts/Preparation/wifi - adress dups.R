@@ -18,11 +18,13 @@ wifi_try2 <- read.csv("Data/Raw/UJIndoorLoc/trainingData.csv",
 
 
 # check how many observations per unique ID -------------------------------
-wifi_check <- wifi_main %>% group_by(LONGITUDE, LATITUDE, FLOOR, BUILDINGID,
+wifi_check2 <- wifi_try2 %>% group_by(LONGITUDE, LATITUDE, FLOOR, BUILDINGID,
                        SPACEID, RELATIVEPOSITION, USERID, PHONEID) %>% 
   summarise(number_of_obs_per_unique_ID = n())
-wifi_check_count <- wifi_check %>% group_by(number_of_obs_per_unique_ID) %>% summarise(occurance = n())
 
+
+wifi_check_count <- wifi_check2 %>% group_by(number_of_obs_per_unique_ID) %>% summarise(occurance = n())
+tail(wifi_check_count)
 
 # summarise WAP value per unique observation ------------------------------
 # vector with WAP names
@@ -44,6 +46,9 @@ wifi_try2 %>% filter(LONGITUDE == -7691.338 & LATITUDE == 4864928) %>% select(WA
                         SPACEID == 222 & RELATIVEPOSITION == 2 & USERID == 1 & PHONEID == 14) %>% 
     select(WAP029)
 
+  
+
+#  Replace NaN ------------------------------------------------------------
 # replace NaN with -150 value ---------------------------------------------
 
 wifi_try[is.na(wifi_try)] <- -150
