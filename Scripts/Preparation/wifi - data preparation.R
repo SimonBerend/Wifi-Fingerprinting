@@ -12,11 +12,16 @@
 # Some Packs? -------------------------------------------------------------
 
 # load data ---------------------------------------------------------------
-setwd("C:/Users/Gebruiker/Desktop/wifi")
 wifi <- read.csv("Data/Raw/UJIndoorLoc/trainingData.csv",
                  sep = ",",
                  na.strings = "100"
 )
+
+
+wifi_val <- read.csv("Data/Raw/UJIndoorLoc/validationData.csv",
+                       sep = ",",
+                       na.strings = "100")
+
 
 # summarise WAP value per unique observation ------------------------------
 # vector with WAP names
@@ -43,9 +48,21 @@ useful_waps <- wifi %>% select(starts_with("WAP")) %>% colnames()
 redundant_waps <- setdiff(wap_names, useful_waps)
 
 # remove redundant waps from vaidation set
-wifi_valid <- wifi_valid[ , !names(wifi_valid) %in% redundant_waps]
+wifi_val <- wifi_val[ , !names(wifi_val) %in% redundant_waps]
 
 
 # replace NaN with -150 value ---------------------------------------------
 wifi[is.na(wifi)] <- -150
+wifi_val[is.na(wifi_val)] <- -150
 
+# # function below is not working
+# # why?
+# replace.na.with.value <- function(x, y){
+#   # x = data.frame
+#   # y = value that takes place of NA's
+#   x[is.na(x)] <- y
+# }
+
+# as.factor to BUILDINGID and FLOOR ---------------------------------------
+wifi[,c("BUILDINGID", "FLOOR")] <- apply(wifi %>% select(BUILDINGID, FLOOR), 2 , as.factor)
+wifi_val[,c("BUILDINGID", "FLOOR")] <- apply(wifi_val %>% select(BUILDINGID, FLOOR), 2 , as.factor)
