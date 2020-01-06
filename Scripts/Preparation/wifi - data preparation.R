@@ -11,8 +11,6 @@
 
 # Some Packs? -------------------------------------------------------------
 
-
-
 # load data ---------------------------------------------------------------
 setwd("C:/Users/Gebruiker/Desktop/wifi")
 wifi <- read.csv("Data/Raw/UJIndoorLoc/trainingData.csv",
@@ -36,10 +34,10 @@ wifi <- wifi %>%
 
 # Remove redundant WAPS ---------------------------------------------------
 # select from wifi columns that have non-NA observations
-wifi2 <- wifi[colSums(!is.na(wifi)) > 0]
+wifi <- wifi[colSums(!is.na(wifi)) > 0]
 
 # Make a vector of useful WAP names
-useful_waps <- wifi2 %>% select(starts_with("WAP")) %>% colnames()
+useful_waps <- wifi %>% select(starts_with("WAP")) %>% colnames()
 
 # compare that with all WAP names
 redundant_waps <- setdiff(wap_names, useful_waps)

@@ -1,27 +1,25 @@
 # -------------------------------------------------------------------------
-# GOAL: Organize Wifi Data 
-# DESCRIPTION: This script is a prediction model for the building, 
-# with minimal and intuitive transformations to the wifi data. 
-# The outcomes serve as a benchmark that can be used to test 
-# hypotheses about feature selection, pre-pocessing, and model selection.
-# DEVELOPER: Berend
-# Tue Dec 17 11:16:04 2019 ------------------------------
+#
+# GOAL: BUILDING MODEL
+# DESCRIPTION: Try a model to predict building ID, after the
+# data preparation.
+#
+# DEVELOPER: BEREND
+# Mon Jan 06 10:10:14 2020 ------------------------------
 # -------------------------------------------------------------------------
 
-# load library -------------------------------------------------------------------------
+# Packs -------------------------------------------------------------------
 if (!require("pacman")) install.packages("pacman")
-
 pacman::p_load("ggplot2", "RColorBrewer", "e1071",
                "dplyr", "dbplyr", "tidyverse", "caret",
                "data.table", "lubridate", "pls")
 
-# load data -------------------------------------------------------------------------
-setwd("C:/Users/Gebruiker/Desktop/wifi")
-wifi_main <- read.csv("Data/Raw/UJIndoorLoc/trainingData.csv",
-                  sep = ",")
+# Source ------------------------------------------------------------------
+source("Scripts/Preparation/wifi - data preparation.R")
 
-wifi_valid <- read.csv("Data/Raw/UJIndoorLoc/validationData.csv",
-                 sep = ",")
+
+
+# Feature Selection -------------------------------------------------------
 
 
 # Create train & test set -------------------------------------------------
@@ -59,9 +57,9 @@ tunegrid <- expand.grid(.mtry = 5)
 start_time <- Sys.time()
 
 wifi_class_mod_SVM <- train(BUILDINGID ~ .,wifi_main,
-                 method = "svmLinear2",
-                 tuneLength = 10,
-                 preProcess = c("scale","center")
+                            method = "svmLinear2",
+                            tuneLength = 10,
+                            preProcess = c("scale","center")
 )
 
 end_time <- Sys.time()
@@ -72,8 +70,8 @@ SVMPredictions <-predict(SVModel, testData)
 cmSVM <-confusionMatrix(SVMPredictions, testData$Class)
 print(cmSVM)
 
-# output -------------------------------------------------------------------------
 
-saveRDS()
+
+
 
 
