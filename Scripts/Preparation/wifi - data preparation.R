@@ -40,29 +40,36 @@ wifi <- wifi %>%
 # Remove redundant WAPS ---------------------------------------------------
 # select from wifi columns that have non-NA observations
 wifi <- wifi[colSums(!is.na(wifi)) > 0]
+wifi_val <- wifi_val[colSums(!is.na(wifi_val)) > 0]
 
 # Make a vector of useful WAP names
-useful_waps <- wifi %>% select(starts_with("WAP")) %>% colnames()
+wifi_waps <- wifi %>% select(starts_with("WAP")) %>% colnames()
+wifi_val_waps <- wifi_val %>% select(starts_with("WAP")) %>% colnames()
 
-# compare that with all WAP names
+useful_waps <- intersect(wifi_waps, wifi_val_waps)
+
+# compare that with all WAP names to determine redundant waps
 redundant_waps <- setdiff(wap_names, useful_waps)
 
-# remove redundant waps from vaidation set
+# remove redundant waps from test & validation set
+wifi <- wifi[ , !names(wifi) %in% redundant_waps]
 wifi_val <- wifi_val[ , !names(wifi_val) %in% redundant_waps]
 
 
-# replace NaN with -150 value ---------------------------------------------
-wifi[is.na(wifi)] <- -150
-wifi_val[is.na(wifi_val)] <- -150
+# replace NaN with -120 value ---------------------------------------------
+wifi[is.na(wifi)] <- -120
+wifi_val[is.na(wifi_val)] <- -120
 
-# # function below is not working
-# # why?
-# replace.na.with.value <- function(x, y){
-#   # x = data.frame
-#   # y = value that takes place of NA's
-#   x[is.na(x)] <- y
-# }
 
 # as.factor to BUILDINGID and FLOOR ---------------------------------------
 wifi[,c("BUILDINGID", "FLOOR")] <- apply(wifi %>% select(BUILDINGID, FLOOR), 2 , as.factor)
 wifi_val[,c("BUILDINGID", "FLOOR")] <- apply(wifi_val %>% select(BUILDINGID, FLOOR), 2 , as.factor)
+
+
+# normlize WAP values per row ---------------------------------------
+normalize_it <- function(x){
+  (x-min(x))/(max(x)-min(x))
+}
+
+wifi[, useful_waps] <- t(apply(wifi %>% select(starts_with("WAP")), 1, normalize_it))
+wifi_val[, useful_waps] <- t(apply(wifi_val %>% select(starts_with("WAP")), 1, normalize_it))

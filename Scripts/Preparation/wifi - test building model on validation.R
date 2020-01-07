@@ -55,30 +55,21 @@ print(cm_bid)
 # visualize errors --------------------------------------------------------
 val_error_check <- cbind(wifi_val, pred_svm_bid)
 
-
-ggplot(val_error_check %>% filter(FLOOR == 0),aes(x= LONGITUDE, y = LATITUDE)) +
-  geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid)))
-
-
-
-ggplot(val_error_check %>% filter(FLOOR == 1),aes(x= LONGITUDE, y = LATITUDE)) +
+visualise_pred <- function(data, floor){
   
-  geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid)))
-
-ggplot(val_error_check %>% filter(FLOOR == 2),aes(x= LONGITUDE, y = LATITUDE)) +
-  geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid)))
-
-ggplot(val_error_check %>% filter(FLOOR == 3),aes(x= LONGITUDE, y = LATITUDE)) +
-  geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid)))
-
-ggplot(val_error_check %>% filter(FLOOR == 4),aes(x= LONGITUDE, y = LATITUDE)) +
-  geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid)))
+  ggplot(data %>% filter(FLOOR == floor),aes(x= LONGITUDE, y = LATITUDE)) +
+    geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid, sep = " - "))) +
+    ggtitle(label = paste("Predicted/actual building on floor", floor)) +
+    labs(color = "Interaction")
+  
+}
+  
+visualise_pred(val_error_check, 1)
 
 
-# try some plotly shit
-plot_ly(val_error_check, x = ~LONGITUDE, y = ~LATITUDE, z = ~FLOOR) %>% 
-  layout(color = interaction(val_error_check$BUILDINGID, val_error_check$pred_svm_bid)
-  )
+# analyse errors ----------------------------------------------------------
+
+errors <- val_error_check %>% filter(BUILDINGID != pred_svm_bid)
 
 
 
