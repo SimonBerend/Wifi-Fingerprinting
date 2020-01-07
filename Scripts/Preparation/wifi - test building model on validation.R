@@ -20,8 +20,8 @@ source("Scripts/Preparation/wifi - data preparation.R")
 set.seed(123)
 
 # Feature Selection: WAPS and BUILDINGID
-wifi_train <- wifi %>% select(starts_with("WAP"), BUILDINGID) 
-wifi_test <- wifi_val %>% select(starts_with("WAP"), BUILDINGID)
+wifi_train <- wifi %>% select(starts_with("WAP"), FLOOR) 
+wifi_test <- wifi_val %>% select(starts_with("WAP"), FLOOR)
 
 # Train Model -------------------------------------------------------------------------
 # modify resampling method : repeatedcv = K-fold Cross Validation
@@ -33,7 +33,7 @@ ctrl <- trainControl(method = "repeatedcv",
 # try "pca" in preProcess
 start_time <- Sys.time()
 
-model_svm_bid <- train(BUILDINGID ~ .,
+THE_floor_model <- train(FLOOR ~ .,
                           wifi_train,
                           method = "svmLinear2",
                           tuneLength = 10,
@@ -45,15 +45,16 @@ end_time <- Sys.time()
 end_time - start_time
 
 # run predictions
-pred_svm_bid <-predict(model_svm_bid, wifi_test)
+THE_floor_predictions <-predict(THE_floor_model, wifi_test)
 
 # Create confusion matrix
-cm_bid <- confusionMatrix(pred_svm_bid, wifi_test$BUILDINGID)
-print(cm_bid)
+wifi_test$FLOOR <- as.factor(wifi_test$FLOOR)
+THE_floor_cm <- confusionMatrix(THE_floor_predictions, wifi_test$FLOOR)
+print(THE_floor_cm)
 
 
 # visualize errors --------------------------------------------------------
-val_error_check <- cbind(wifi_val, pred_svm_bid)
+error_check <- cbind(wifi_val, THE_floor_predictions)
 
 visualise_pred <- function(data, floor){
   
@@ -66,6 +67,14 @@ visualise_pred <- function(data, floor){
   
 visualise_pred(val_error_check, 1)
 
+# -------------------------------------------------------------------------
+
+# extra columns for actual/predicted value interaction
+error_check <- error_check %>% mutate(correct = FLOOR == THE_floor_predictions)
+
+ggplot(error_check ,aes(x= LONGITUDE, y = LATITUDE)) +
+  geom_jitter(aes(color = correct)) +
+  ggtitle(label = "Predicted/actual floors")
 
 # analyse errors ----------------------------------------------------------
 

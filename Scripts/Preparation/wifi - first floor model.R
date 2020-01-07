@@ -42,7 +42,7 @@ ctrl <- trainControl(method = "repeatedcv",
 # try "pca" in preProcess
 start_time <- Sys.time()
 
-wifi_fit_svm_flo <- train(FLOOR ~ .,
+floor_svm_model <- train(FLOOR ~ .,
                           wifi_train,
                           method = "svmLinear2",
                           tuneLength = 10,
@@ -54,38 +54,11 @@ end_time <- Sys.time()
 end_time - start_time
 
 # run predictions
-wifi_pred_svm_flo <-predict(wifi_fit_svm_flo, wifi_test)
+predictions_floor_svm <-predict(floor_svm_model, wifi_test)
 
 # Create confusion matrix
-cm_flo_svm <- confusionMatrix(wifi_pred_svm_flo, wifi_test$FLOOR)
-print(cm_flo_svm)
+cm_floor_svm <- confusionMatrix(predictions_floor_svm, wifi_test$FLOOR)
+print(cm_floor_svm)
 
-# check variable importance
-# var_imp_svm_flo <- varImp(wifi_fit_svm_flo)
-
-
-# DT Model -----------------------------------------------
-# Save for later
-# train Model
-# try "pca" in preProcess
-start_time <- Sys.time()
-
-wifi_fit_dt_flo <- train(FLOOR ~ .,
-                          wifi_train,
-                          method = "C5.0",
-                          tuneLength = 10,
-                          trControl = ctrl,
-                          preProcess = c("scale","center")
-)
-
-end_time <- Sys.time()
-end_time - start_time
-
-# run predictions
-wifi_pred_knn_flo <-predict(wifi_fit_knn_flo, wifi_test)
-
-# Create confusion matrix
-cm_flo_knn <- confusionMatrix(wifi_pred_knn_flo, wifi_test$FLOOR)
-print(cm_flo_knn)
 
 
