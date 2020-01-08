@@ -36,6 +36,8 @@ wifi <- wifi %>%
   summarise_at(wap_names, mean, na.rm = TRUE) %>% 
   ungroup()
 
+# Throw out PHONEID 7 & 19 , those phones crazy
+wifi <- wifi %>% filter(PHONEID != 7 & PHONEID !=  19)
 
 # Remove redundant WAPS ---------------------------------------------------
 # select from wifi columns that have non-NA observations
@@ -66,9 +68,14 @@ wifi[,c("BUILDINGID", "FLOOR")] <- apply(wifi %>% select(BUILDINGID, FLOOR), 2 ,
 wifi_val[,c("BUILDINGID", "FLOOR")] <- apply(wifi_val %>% select(BUILDINGID, FLOOR), 2 , as.factor)
 
 
+
 # normlize WAP values per row ---------------------------------------
 normalize_it <- function(x){
   (x-min(x))/(max(x)-min(x))
+}
+
+zscore <- function(x) {
+  (x-mean(x))/sd(x)
 }
 
 wifi[, useful_waps] <- t(apply(wifi %>% select(starts_with("WAP")), 1, normalize_it))

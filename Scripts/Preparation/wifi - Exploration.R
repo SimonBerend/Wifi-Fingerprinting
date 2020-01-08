@@ -58,17 +58,25 @@ wifi_valid$PHONEID <- as.factor(wifi_valid$PHONEID)
 ggplot(wifi_valid,aes(x= LONGITUDE, y = LATITUDE)) +
     geom_(aes(color = PHONEID))
   
-# save for report
-save.image()
 
+# visualize ---------------------------------------------------------------
+wifi$PHONEID <- as.factor(wifi$PHONEID)
 
-# nearZeroVariance --------------------------------------------------
+# errors on floor 0
+ggplot() +
+  geom_jitter(data = wifi %>% filter(FLOOR == 0, BUILDINGID == c(0, 1)),
+              aes(x= LONGITUDE, y = LATITUDE, color = PHONEID)) +
+  geom_jitter(data = errors %>% filter(FLOOR == c(0,1), BUILDINGID == c(0, 1)),
+              aes(x= LONGITUDE, y = LATITUDE), color = "darkred") +
+  ggtitle(label = paste("SUP")) +
+  labs(color = "YO")
 
+# errors on floor 1
+ggplot() +
+  geom_jitter(data = wifi %>% filter(FLOOR == 1, BUILDINGID == c(0, 1)),
+              aes(x= LONGITUDE, y = LATITUDE, color = PHONEID)) +
+  geom_jitter(data = errors %>% filter(FLOOR == c(0,1), BUILDINGID == c(0, 1)),
+              aes(x= LONGITUDE, y = LATITUDE), color = "darkred") +
+  ggtitle(label = paste("SUP")) +
+  labs(color = "YO")
 
-
-
-x <- unique(wifi_main$PHONEID)
-y <- unique(wifi_valid$PHONEID)
-length(y)
-length(unique(c(x,y)))
-duplicated(c(x,y))

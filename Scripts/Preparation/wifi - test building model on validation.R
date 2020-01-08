@@ -33,54 +33,22 @@ ctrl <- trainControl(method = "repeatedcv",
 # try "pca" in preProcess
 start_time <- Sys.time()
 
-THE_floor_model <- train(FLOOR ~ .,
+SVM_floor_model <- train(FLOOR ~ .,
                           wifi_train,
-                          method = "svmLinear2",
+                          method = "knn",
                           tuneLength = 10,
-                          trControl = ctrl,
-                          preProcess = c("scale","center")
+                          trControl = ctrl
+                          #,
+                          #preProcess = c("scale","center")
 )
 
 end_time <- Sys.time()
 end_time - start_time
 
 # run predictions
-THE_floor_predictions <-predict(THE_floor_model, wifi_test)
+SVM_floor_predictions <-predict(SVM_floor_model, wifi_test)
 
 # Create confusion matrix
 wifi_test$FLOOR <- as.factor(wifi_test$FLOOR)
-THE_floor_cm <- confusionMatrix(THE_floor_predictions, wifi_test$FLOOR)
-print(THE_floor_cm)
-
-
-# visualize errors --------------------------------------------------------
-error_check <- cbind(wifi_val, THE_floor_predictions)
-
-visualise_pred <- function(data, floor){
-  
-  ggplot(data %>% filter(FLOOR == floor),aes(x= LONGITUDE, y = LATITUDE)) +
-    geom_jitter(aes(color = interaction(BUILDINGID, pred_svm_bid, sep = " - "))) +
-    ggtitle(label = paste("Predicted/actual building on floor", floor)) +
-    labs(color = "Interaction")
-  
-}
-  
-visualise_pred(val_error_check, 1)
-
-# -------------------------------------------------------------------------
-
-# extra columns for actual/predicted value interaction
-error_check <- error_check %>% mutate(correct = FLOOR == THE_floor_predictions)
-
-ggplot(error_check ,aes(x= LONGITUDE, y = LATITUDE)) +
-  geom_jitter(aes(color = correct)) +
-  ggtitle(label = "Predicted/actual floors")
-
-# analyse errors ----------------------------------------------------------
-
-errors <- val_error_check %>% filter(BUILDINGID != pred_svm_bid)
-
-
-
-
-
+SVM_floor_cm <- confusionMatrix(SVM_floor_predictions, wifi_test$FLOOR)
+print(SVM_floor_cm)
