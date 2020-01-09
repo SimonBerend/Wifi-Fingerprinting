@@ -9,7 +9,11 @@
 # Sun Jan 05 17:06:02 2020 ------------------------------
 # -------------------------------------------------------------------------
 
-# Some Packs? -------------------------------------------------------------
+# Packs -------------------------------------------------------------
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("ggplot2", "RColorBrewer", "e1071",
+               "dplyr", "dbplyr", "tidyverse", "caret",
+               "data.table", "lubridate", "pls")
 
 # load data ---------------------------------------------------------------
 wifi <- read.csv("Data/Raw/UJIndoorLoc/trainingData.csv",
@@ -27,6 +31,7 @@ wifi_val <- read.csv("Data/Raw/UJIndoorLoc/validationData.csv",
 # vector with WAP names
 wap_names <- wifi %>% select(starts_with("WAP")) %>% colnames()
 
+
 # Summarise at
 # note that time stamp is lost
 # summarise: mean or median?
@@ -37,7 +42,8 @@ wifi <- wifi %>%
   ungroup()
 
 # Throw out PHONEID 7 & 19 , those phones crazy
-wifi <- wifi %>% filter(PHONEID != 7 & PHONEID !=  19)
+# PHONEID != 7 & 
+wifi <- wifi %>% filter(PHONEID !=  19)
 
 # Remove redundant WAPS ---------------------------------------------------
 # select from wifi columns that have non-NA observations
@@ -68,6 +74,9 @@ wifi[,c("BUILDINGID", "FLOOR")] <- apply(wifi %>% select(BUILDINGID, FLOOR), 2 ,
 wifi_val[,c("BUILDINGID", "FLOOR")] <- apply(wifi_val %>% select(BUILDINGID, FLOOR), 2 , as.factor)
 
 
+# make a copy -------------------------------------------------------------
+
+wifi2 <- wifi
 
 # normlize WAP values per row ---------------------------------------
 normalize_it <- function(x){
