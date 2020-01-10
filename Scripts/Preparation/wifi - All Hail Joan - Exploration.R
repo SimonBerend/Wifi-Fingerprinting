@@ -10,7 +10,7 @@ wifi %>%
 
 wifi2 %>%
   gather(starts_with("WAP"), key = "wap", value = "value") %>%
-  filter(value != -120) %>%
+  filter(value != 100) %>%
   # group_by(BUILDINGID, FLOOR) %>%
   # count() %>%
   ggplot(aes(x = value)) +

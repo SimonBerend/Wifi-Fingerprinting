@@ -36,7 +36,7 @@ wifi_b1 <- wifi %>% filter(BUILDINGID == 1)
 wifi_b1 <- wifi_b1[,names(wifi_b1) %in% b1_colnames]
 wifi_b1$PHONEID <- as.factor(wifi_b1$PHONEID)
 
-plot_ly(wifi_b1, x = ~LONGITUDE, y = ~LATITUDE, z = ~FLOOR, color = ~PHONEID)
+plot_ly(wifi, x = ~LONGITUDE, y = ~LATITUDE, z = ~FLOOR, color = ~PHONEID)
 
 
 

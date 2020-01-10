@@ -74,18 +74,14 @@ wifi[,c("BUILDINGID", "FLOOR")] <- apply(wifi %>% select(BUILDINGID, FLOOR), 2 ,
 wifi_val[,c("BUILDINGID", "FLOOR")] <- apply(wifi_val %>% select(BUILDINGID, FLOOR), 2 , as.factor)
 
 
-# make a copy -------------------------------------------------------------
-
-wifi2 <- wifi
-
 # normlize WAP values per row ---------------------------------------
 normalize_it <- function(x){
   (x-min(x))/(max(x)-min(x))
 }
 
-zscore <- function(x) {
-  (x-mean(x))/sd(x)
-}
+# zscore <- function(x) {
+#   (x-mean(x))/sd(x)
+# }
 
 wifi[, useful_waps] <- t(apply(wifi %>% select(starts_with("WAP")), 1, normalize_it))
 wifi_val[, useful_waps] <- t(apply(wifi_val %>% select(starts_with("WAP")), 1, normalize_it))
