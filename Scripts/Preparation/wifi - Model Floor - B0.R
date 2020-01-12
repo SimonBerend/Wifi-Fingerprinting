@@ -18,10 +18,10 @@ set.seed(123)
 
 # train & test set ------------------------------------------------------------
 # subset and feature selection: WAPS and FLOOR
-wifi_train <- wifi %>% filter(BUILDINGID == 1) %>% select(starts_with("WAP"), FLOOR) 
-wifi_test <- wifi_val %>% filter(BUILDINGID == 1) %>% select(starts_with("WAP"), FLOOR)
+wifi_train <- wifi %>% filter(BUILDINGID == 0) %>% select(starts_with("WAP"), FLOOR) 
+wifi_test <- wifi_val %>% filter(BUILDINGID == 0) %>% select(starts_with("WAP"), FLOOR)
 
-# Set FLOOR as ordered factor
+# Set FLOOR as ordered factor (doesn't improve model)
 wifi_train$FLOOR <- factor(wifi_train$FLOOR, ordered = TRUE)
 wifi_test$FLOOR <- factor(wifi_test$FLOOR, ordered = TRUE)
 
@@ -50,22 +50,21 @@ building_redundant_waps <- setdiff(wap_names, building_useful_waps)
 wifi_train <- wifi_train[ , !names(wifi_train) %in% building_redundant_waps]
 wifi_test <- wifi_test[ , !names(wifi_test) %in% building_redundant_waps]
 
+# Set threshold : Use only WAPs with value above ... ----------------------------
+wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] < 0.6] <- 0
+wifi_test[,building_useful_waps][wifi_test[,building_useful_waps] < 0.6] <- 0
 
-# Set threshold : Use only WAPs with value above 0.5 ----------------------------
-wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] < 0.8] <- 0
-wifi_test[,building_useful_waps][wifi_test[,building_useful_waps] < 0.8] <- 0
-# wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] == 0] <- NA
-# mean(rowMeans(checkMeans[,building_useful_waps], na.rm = T)) = 0.68
-# Keep only rows where mean value of detected WAPs is more than 0.6
-# wifi_train <- subset(wifi_train, rowMeans(wifi_train[,building_useful_waps], na.rm = T) > 0.6)
-# wifi_train[is.na(wifi_train)] <- 0
+
+# remove suspect waps 71 & 72 (13 is not ok either, but removing weakens model)
+wifi_train <- wifi_train[ , !names(wifi_train) %in% c("WAP071", "WAP072", "WAP049", "WAP050")]
+wifi_test <- wifi_test[ , !names(wifi_test) %in% c("WAP071", "WAP072", "WAP049", "WAP050")]
 
 
 # Train Model -------------------------------------------------------------------------
 # modify resampling method : repeatedcv = K-fold Cross Validation
-ctrl <- trainControl(method = "repeatedcv",
-                     verboseIter = TRUE,
-                     repeats = 3)
+# ctrl <- trainControl(method = "repeatedcv",
+ #                   verboseIter = TRUE,
+  #                  repeats = 3)
 
 # train Model
 # try "pca" in preProcess
@@ -73,9 +72,9 @@ start_time <- Sys.time()
 
 floor_model <- train(FLOOR ~ .,
                           wifi_train,
-                          method = "knn",
-                           tuneGrid = expand.grid(k = c(1:5)),
-                          # tuneLength = 10,
+                          method = "rf",
+                          # tuneGrid = expand.grid(k = c(1:5)),
+                           tuneLength = 10,
                           trControl = ctrl
                           #,
                           #preProcess = c("scale","center")
@@ -88,10 +87,9 @@ end_time - start_time
 predict_floor <-predict(floor_model, wifi_test)
 
 # Create confusion matrix
-# wifi_test$FLOOR <- as.factor(wifi_test$FLOOR)
 floor_cm <- confusionMatrix(predict_floor, wifi_test$FLOOR)
 print(floor_cm)
 
 # 0.91 radialSigma model (< 0.7 <- 0) is saved as follows
-# floor_B1_svmRS <- floor_cm
-# saveRDS(floor_B1_svmRS, file = "Data/Clean/floor_model_B1_svmRadialSigma.rds")
+# floor_B1_knn <- floor_cm
+# saveRDS(floor_B1_knn, file = "Data/Clean/floor_model_B1_knn.rds")
