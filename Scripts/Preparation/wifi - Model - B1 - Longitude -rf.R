@@ -43,12 +43,12 @@ wifi_train <- wifi_train[ , !names(wifi_train) %in% building_redundant_waps]
 wifi_test <- wifi_test[ , !names(wifi_test) %in% building_redundant_waps]
 
 # Set threshold : Use only WAPs with value above ... ----------------------------
-wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] < 0.65] <- 0
-wifi_test[,building_useful_waps][wifi_test[,building_useful_waps] < 0.65] <- 0
+wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] < 0.8] <- 0
+wifi_test[,building_useful_waps][wifi_test[,building_useful_waps] < 0.8] <- 0
 
 # remove suspect waps 
-# wifi_train <- wifi_train[ , !names(wifi_train) %in% c("WAP", "WAP", "WAP", "WAP050")]
-# wifi_test <- wifi_test[ , !names(wifi_test) %in% c("WAP071", "WAP072", "WAP049", "WAP050")]
+wifi_train <- wifi_train[ , !names(wifi_train) %in% c("WAP334")]
+wifi_test <- wifi_test[ , !names(wifi_test) %in% c("WAP334")]
 
 
 # Train Model -------------------------------------------------------------------------
@@ -63,9 +63,9 @@ start_time <- Sys.time()
 
 long_model <- train(LONGITUDE ~ .,
                           wifi_train,
-                          method = "rf",
-                          # tuneGrid = expand.grid(k = c(1:5)),
-                           tuneLength = 10,
+                          method = "knn",
+                           tuneGrid = expand.grid(k = c(1:5)),
+                          # tuneLength = 10,
                           trControl = ctrl
                           #,
                           #preProcess = c("scale","center")
@@ -75,22 +75,10 @@ end_time <- Sys.time()
 end_time - start_time
 
 # run predictions
-predict_knn <-predict(model_B1_longitude_knn, wifi_test)
-predict_rf <-predict(model_B1_longitude_rf, wifi_test)
+predict_long <-predict(long_model, wifi_test)
 # check performance
 postResample(predict_long, wifi_test$LONGITUDE)
-
-postResample(predict_knn, wifi_test$LONGITUDE)
-postResample(predict_rf, wifi_test$LONGITUDE)
-m1
-
-predict <-predict(model_B2_latitude_knn, wifi_test)
-postResample(predict, wifi_test$LATITUDE)
-
-m1
-postResample()
 
 # model_B1_longitude_rf <- long_model
 # saveRDS(model_B1_longitude_rf, file = "Data/Clean/model_B1_longitude_rf.rds")
 
-model_B1_longitude_knn

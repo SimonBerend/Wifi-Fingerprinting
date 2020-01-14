@@ -62,9 +62,9 @@ wifi_test <- wifi_test[ , !names(wifi_test) %in% c("WAP071", "WAP072", "WAP049",
 
 # Train Model -------------------------------------------------------------------------
 # modify resampling method : repeatedcv = K-fold Cross Validation
-# ctrl <- trainControl(method = "repeatedcv",
- #                   verboseIter = TRUE,
-  #                  repeats = 3)
+ ctrl <- trainControl(method = "repeatedcv",
+                    verboseIter = TRUE,
+                    repeats = 3)
 
 # train Model
 # try "pca" in preProcess
@@ -74,7 +74,8 @@ floor_model <- train(FLOOR ~ .,
                           wifi_train,
                           method = "rf",
                           # tuneGrid = expand.grid(k = c(1:5)),
-                           tuneLength = 10,
+                          # tuneGrid = expand.grid(mtry = c(12, 16, 18)),
+                          tuneLength = 10,
                           trControl = ctrl
                           #,
                           #preProcess = c("scale","center")
@@ -92,4 +93,4 @@ print(floor_cm)
 
 # 0.91 radialSigma model (< 0.7 <- 0) is saved as follows
 # floor_B1_knn <- floor_cm
-# saveRDS(floor_B1_knn, file = "Data/Clean/floor_model_B1_knn.rds")
+# saveRDS(floor_model, file = "Data/Clean/floor_model_B0_rf.rds")
