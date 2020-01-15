@@ -18,8 +18,9 @@ set.seed(123)
 
 # train & test set ------------------------------------------------------------
 # subset and feature selection: WAPS and LATITUDE
-wifi_train <- wifi %>% filter(BUILDINGID == 0) %>% select(starts_with("WAP"), LATITUDE) 
+wifi_train <- wifi %>% filter(BUILDINGID == 0, USERID != 1) %>% select(starts_with("WAP"), LATITUDE) 
 wifi_test <- wifi_val %>% filter(BUILDINGID == 0) %>% select(starts_with("WAP"), LATITUDE)
+
 
 
 # remove WAPs that are not used in this building --------------------------
@@ -43,8 +44,8 @@ wifi_train <- wifi_train[ , !names(wifi_train) %in% building_redundant_waps]
 wifi_test <- wifi_test[ , !names(wifi_test) %in% building_redundant_waps]
 
 # Set threshold : Use only WAPs with value above ... ----------------------------
-wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] < 0.8] <- 0
-wifi_test[,building_useful_waps][wifi_test[,building_useful_waps] < 0.8] <- 0
+wifi_train[,building_useful_waps][wifi_train[,building_useful_waps] < 0.5] <- 0
+wifi_test[,building_useful_waps][wifi_test[,building_useful_waps] < 0.5] <- 0
 
 
 # Train Model -------------------------------------------------------------------------
@@ -60,7 +61,7 @@ start_time <- Sys.time()
 long_model <- train(LATITUDE ~ .,
                           wifi_train,
                           method = "knn",
-                           tuneGrid = expand.grid(k = c(1:5)),
+                           tuneGrid = expand.grid(k = 6:8),
                           # tuneLength = 10,
                           trControl = ctrl
                           #,

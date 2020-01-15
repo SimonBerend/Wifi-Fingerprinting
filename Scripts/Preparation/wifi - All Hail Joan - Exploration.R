@@ -22,3 +22,17 @@ wifi %>%
   filter_at(vars(useful_waps), any_vars(-75 < .)) %>% 
   group_by(PHONEID) %>% 
   count()
+
+
+
+# Observations per Floor --------------------------------------------------
+
+wifi %>% 
+  group_by(BUILDINGID, FLOOR) %>% 
+  # summarize(n = n()) %>%
+  ggplot(aes(x = BUILDINGID, y = FLOOR)) +
+  geom_count(aes(color = ..n.., size = ..n..))  +
+  guides(color = 'legend') +
+  scale_colour_gradient(low = "blue", high = "darkred") +
+  theme_bw()
+  

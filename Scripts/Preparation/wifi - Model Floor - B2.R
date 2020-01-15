@@ -73,7 +73,7 @@ start_time <- Sys.time()
 floor_model <- train(FLOOR ~ .,
                           wifi_train,
                           method = "knn",
-                           tuneGrid = expand.grid(k = c(1:5)),
+                           tuneGrid = expand.grid(k = c(6:10)),
                           # tuneLength = 10,
                           trControl = ctrl
                           #,
