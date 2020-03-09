@@ -1,17 +1,13 @@
 # -------------------------------------------------------------------------
-# GOAL: TEST BUILDING MODEL ON VALIDATION DATA
-# DESCRIPTION: Test vsm model based on all data (after prep)
-# on the validation data.
+# GOAL: A model to predict Building ID
 # DEVELOPER: BEREND
 # Mon Jan 06 14:35:03 2020 ------------------------------
 # -------------------------------------------------------------------------
 
 # Packs -------------------------------------------------------------------
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2", "RColorBrewer", "e1071",
-               "dplyr", "dbplyr", "tidyverse", "caret",
-               "data.table", "lubridate", "pls",
-               "scatterplot3d", "plotly")
+pacman::p_load("e1071", "dplyr", "dbplyr", "tidyverse",
+               "caret", "data.table", "pls", "magrittr")
 
 # Source ------------------------------------------------------------------
 source("Scripts/Preparation/wifi - data preparation.R")
@@ -19,14 +15,13 @@ source("Scripts/Preparation/wifi - data preparation.R")
 # Create train & test set -------------------------------------------------
 set.seed(123)
 
-
 # Feature Selection: WAPS and BUILDINGID
-wifi_train <- wifi %>% select(starts_with("WAP"), FLOOR) 
-wifi_test <- wifi_val %>% select(starts_with("WAP"), FLOOR)
+wifi_train <- wifi %>% select(starts_with("WAP"), BUILDINGID) 
+wifi_test <- wifi_val %>% select(starts_with("WAP"), BUILDINGID)
 
 # Set FLOOR as ordered factor
-wifi_train$FLOOR <- factor(wifi_train$FLOOR, ordered = TRUE)
-wifi_test$FLOOR <- factor(wifi_test$FLOOR, ordered = TRUE)
+wifi_train$BUILDINGID %<>% as.factor()
+wifi_test$BUILDINGID %<>% as.factor()
 
 # Train Model -------------------------------------------------------------------------
 # modify resampling method : repeatedcv = K-fold Cross Validation
@@ -35,26 +30,19 @@ ctrl <- trainControl(method = "repeatedcv",
                      repeats = 3)
 
 # train Model
-# try "pca" in preProcess
-start_time <- Sys.time()
-
-KNN_floor_model <- train(FLOOR ~ .,
-                          wifi_train,
-                          method = "knn",
-                         tuneGrid = expand.grid(k = c(1:5)),
-                          #tuneLength = 10,
-                          trControl = ctrl
-                          #,
-                          #preProcess = c("scale","center")
+model_building_knn <- train(BUILDINGID ~ .,
+                            wifi_train,
+                            method = "knn",
+                            tuneGrid = expand.grid(k = c(1:5)),
+                            trControl = ctrl
 )
 
-end_time <- Sys.time()
-end_time - start_time
-
 # run predictions
-KNN_floor_predictions <-predict(KNN_floor_model, wifi_test)
+building_predictions <-predict(model_building_knn, wifi_test)
 
 # Create confusion matrix
-# wifi_test$FLOOR <- as.factor(wifi_test$FLOOR)
-KNN_floor_cm <- confusionMatrix(KNN_floor_predictions, wifi_test$FLOOR)
-print(KNN_floor_cm)
+building_confusion_matrix <- confusionMatrix(building_predictions, wifi_test$BUILDINGID)
+print(building_confusion_matrix)
+
+# save model
+saveRDS(model_building_knn, file = "Data/Clean/building_model_knn.rds")
