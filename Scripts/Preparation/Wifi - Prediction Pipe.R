@@ -22,7 +22,7 @@ guy <- sample_n(wifi_val, size = 1, replace = F)
 
 # Check Building ID -------------------------------------------------------
 
- 
+building_model <- readRDS()
 
 
 
